@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'fr.ubordeaux.architecture.export'
+archivesBaseName = 'architecture-export'
+version = '1.0.0'
+
+mainClassName = 'fr.ubordeaux.architecture.export.ArchitectureExportApplication'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile(
+        'com.google.guava:guava:18.0',
+        'com.google.code.gson:gson:2.8.2',
+        'com.googlecode.json-simple:json-simple:1.1.1',
+        'com.tngtech.archunit:archunit-junit4:0.10.2'
+    )
+}
+
+run {
+    standardInput = System.in
+    args System.getProperty('args', '').split()
+}
+
+jar {
+    manifest {
+        attributes(
+            'Manifest-Version': '1.0.0',
+            'Main-Class': mainClassName,
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version,
+            'Built-By': System.getProperty('user.name'),
+            'Built-Date': new Date(),
+            'Built-Gradle': gradle.gradleVersion,
+            'Built-JDK': System.getProperty('java.version'),
+            'Built-OS': System.getProperty('os.name')
+        )
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
